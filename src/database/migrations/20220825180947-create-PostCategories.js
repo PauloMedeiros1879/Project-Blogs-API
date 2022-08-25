@@ -1,21 +1,36 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-     */
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.createTable('PostCategories', {
+      
+      postId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        primaryKey:true,
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+        references: {
+          model:"BlogPosts",
+          key: "id",
+        }
+      },
+
+      categoryId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        primaryKey:true,
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+        references: {
+          model:"Categories",
+          key: "id",
+        }
+      },
+    });
   },
 
-  down: async (queryInterface, Sequelize) => {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
-  }
+  down: (queryInterface) => {
+    return queryInterface.dropTable('PostCategories');
+  },
 };
