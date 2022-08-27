@@ -1,28 +1,36 @@
-module.exports = (sequelize, DataTypes) => {
-  const PostCategory = sequelize.define('PostCategory', {
-    postId: { type: DataTypes.INTEGER, foreignKey: true },
-    categoryId: { type: DataTypes.INTEGER, foreignKey: true },
-  },
-  {
-    timestamps: false, // remove a obrigatoriedade de utilizar os campos `createdAt` e `updatedAt`
-    tableName: 'PostCategory',
-    underscored: true,
-  });
+const PostCategory = (sequelize, DataTypes) => {
+  const PostCategory = sequelize.define('PostCategory',
+    {
+      postId: {
+        type: DataTypes.INTEGER,
+        foreignKey: true,
+        primaryKey: true,
+      },
+      categoryId: {
+        type: DataTypes.INTEGER,
+        foreignKey: true,
+        primaryKey: true,
+      },
+    },
+    { timestamps: false },
+  );
 
   PostCategory.associate = (models) => {
-    models.Category.belongsToMany(models.BlogPost, {
-      as: 'blogpost',
-      through: PostCategory,
-      foreignKey: 'category_id',
-      otherKey: 'blogpost_id',
-    });
     models.BlogPost.belongsToMany(models.Category, {
-      as: 'category',
+      as: 'categories',
       through: PostCategory,
-      foreignKey: 'blogpost_id',
-      otherKey: 'category_id',
+      foreignKey: 'postId',
+      otherKey: 'categoryId',
+    });
+    models.Category.belongsToMany(models.BlogPost, {
+      as: 'BlogPost',
+      through: PostCategory,
+      foreignKey: 'categoryId',
+      otherKey: 'postId',
     });
   };
 
   return PostCategory;
 };
+
+module.exports = PostCategory;

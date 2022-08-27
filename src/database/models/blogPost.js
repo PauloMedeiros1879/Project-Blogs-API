@@ -1,16 +1,14 @@
-module.exports = (sequelize, DataTypes) => {
+const BlogPost =  (sequelize, DataTypes) => {
   const BlogPost = sequelize.define('BlogPost', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     title: DataTypes.STRING,
     content: DataTypes.STRING,
     userId: { type: DataTypes.INTEGER, foreignKey: true },
-    published: DataTypes.DATE,
-    updated: DataTypes.DATE,
+    published: { type: DataTypes.DATE },
+    updated: { type: DataTypes.DATE },
   },
   {
-    timestamps: false, // remove a obrigatoriedade de utilizar os campos `createdAt` e `updatedAt`
-    tableName: 'BlogPost',
-    underscored: true,
+    timestamps: false,
   });
 
   BlogPost.associate = (models) => {
@@ -19,4 +17,6 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   return BlogPost;
-};
+}
+
+module.exports = BlogPost;
