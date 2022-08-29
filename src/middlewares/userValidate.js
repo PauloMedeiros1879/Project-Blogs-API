@@ -1,26 +1,32 @@
+const Joi = require('joi');
 const { User } = require('../database/models');
 
-const validations = async (data) => {
-  if (data.displayName.length < 8) {
-    return { error:
-      { code: 400, message: '"displayName" length must be at least 8 characters long' },
-    };
-  }
+const fieldsValidations = Joi.object({
+  displayName: Joi.string().min(8).required().messages({
+    'any.required': '"displayName" is required',
+    'string.min': '"displayName" length must be at least 8 characters long',
+  }),
+  email: Joi.string().email().required().messages({
+    'any.required': '"email" must be a valid email',
+    'string.email': '"email" must be a valid email',
+  }),
+  password: Joi.string().min(6).required().messages({
+    'any.required': '"displayName" is required',
+    'string.min': '"password" length must be at least 6 characters long',
+  }),
+  image: Joi.string(),
+});
 
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const validEmail = data.email.match(regex);
-  if (!validEmail) {
-    return { error: { code: 400, message: '"email" must be a valid email' } };
+const userPlace = async (req, res, next) => {
+  const validatePlace = fieldsValidations.validate(req.body);
+  if (validatePlace.error) {
+    return next({ message: validatePlace.error.details[0].message, code: 400 });
   }
+  const { email } = req.body;
+  const user = await User.findOne({ where: { email } });
+  if (user) return next({ message: 'User already registered', code: 409 });
 
-  if (data.password.length < 6) {
-    return { error:
-      { code: 400, message: '"password" length must be at least 6 characters long' } };
-  }
-  
-  const userLogin = await User.findOne({ where: { email: data.email } });
-    if (userLogin) return { error: { code: 409, message: 'User already registered' } };
-    return true;
+  return next();
 };
 
-module.exports = validations;
+module.exports = userPlace;
