@@ -1,9 +1,9 @@
-const express = require('express');
+const { Router } = require('express');
 const userController = require('../controllers/userController');
 const tokenAuthentication = require('../middlewares/Authentication');
 const userPlace = require('../middlewares/userValidate');
 
-const userRoute = express.Router();
+const userRoute = Router();
 
 userRoute.post('/', userPlace, userController.create);
 userRoute.get('/:id', tokenAuthentication, userController.findOnUser);
