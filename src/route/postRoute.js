@@ -9,5 +9,6 @@ postRoute.use(tokenAuthentication);
 
 postRoute.post('/', validPost, postController.create);
 postRoute.get('/', postController.findAll);
+postRoute.get('/:id', tokenAuthentication, postController.getById);
 
 module.exports = postRoute;
